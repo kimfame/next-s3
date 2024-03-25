@@ -45,6 +45,7 @@ export default function Home() {
         </button>
       </form>
 
+      <p>{imageUrl}</p>
       {imageUrl && (
         <Image src={imageUrl} width="300" height="300" alt="Image" />
       )}

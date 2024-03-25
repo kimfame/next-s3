@@ -1,4 +1,9 @@
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
+import {
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3'
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { NextResponse } from 'next/server'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -26,6 +31,15 @@ async function uploadFileToS3(file, fileName, fileType) {
   await s3Client.send(command)
 }
 
+async function getImageUrl(fileName) {
+  const command = new GetObjectCommand({
+    Bucket: process.env.AWS_S3_BUCKET_NAME,
+    Key: fileName,
+  })
+  const url = await getSignedUrl(s3Client, command, { expiresIn: 60 })
+  return url
+}
+
 export async function POST(req) {
   try {
     const formData = await req.formData()
@@ -42,7 +56,9 @@ export async function POST(req) {
 
     await uploadFileToS3(buffer, newFileName, fileType)
 
-    const imageUrl = `${process.env.AWS_S3_OBJECT_URL}/${newFileName}`
+    // const imageUrl = `${process.env.AWS_S3_OBJECT_URL}/${newFileName}`
+    const imageUrl = await getImageUrl(newFileName)
+
     return NextResponse.json(imageUrl)
   } catch (error) {
     return NextResponse.json({ error })

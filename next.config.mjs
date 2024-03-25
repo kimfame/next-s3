@@ -7,7 +7,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: `*.s3.${process.env.AWS_REGION}.amazonaws.com`,
+        hostname: '**.amazonaws.com',
       },
     ],
   },
