@@ -1,9 +1,9 @@
 'use client'
 
-import Image from 'next/image'
 import { useState } from 'react'
+import UrlImage from './UrlImage'
 
-export default function Home() {
+export default function UploadForm() {
   const [file, setFile] = useState(null)
   const [uploading, setUploading] = useState(false)
   const [imageUrl, setImageUrl] = useState('')
@@ -25,18 +25,17 @@ export default function Home() {
         method: 'POST',
         body: formData,
       })
-
       const data = await response.json()
       setImageUrl(data)
       setUploading(false)
-    } catch (error) {
+    } catch (err) {
       setUploading(false)
     }
   }
 
   return (
-    <>
-      <h1>Upload Images to AWS S3</h1>
+    <div>
+      <h1>Upload images to AWS S3</h1>
 
       <form onSubmit={handleSubmit}>
         <input type="file" accept="image/*" onChange={handleFileChange} />
@@ -45,11 +44,7 @@ export default function Home() {
         </button>
       </form>
 
-      <p>{imageUrl}</p>
-      {imageUrl && (
-        <Image src={imageUrl} width="300" height="300" alt="Image" />
-      )}
-      {!imageUrl && <h2>No image</h2>}
-    </>
+      <UrlImage url={imageUrl} />
+    </div>
   )
 }
